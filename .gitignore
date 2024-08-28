@@ -1,0 +1,10 @@
+out
+target
+*.iml
+.idea
+*.log
+kafka-cli-example/target
+kafka-cli-example/out
+.DS_Store
+deploy.sh
+settings.xml
