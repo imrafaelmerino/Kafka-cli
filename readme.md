@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./kafka_cli.png" alt="Logo" width="300" height="300" />
+</p>
+
 - [Introduction](#intro)
 - [Configuration File](#conf)
 - [List of Commands](#list)
