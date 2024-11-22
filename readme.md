@@ -4,7 +4,6 @@
 
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/kafka-cli/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/kafka-cli/1.0.0/jar)
 
-
 - [Introduction](#intro)
 - [Configuration File](#conf)
 - [List of Commands](#list)
@@ -82,9 +81,7 @@ setup and requirements.
     },
     "consumers": {
       "consumer1": {
-        "topics": [
-          "topic1"
-        ],
+        "topics": ["topic1"],
         "pollTimeoutSec": 10,
         "props": {
           "key.deserializer": "jsonvalues.spec.deserializers.confluent.ConfluentDeserializer",
@@ -95,9 +92,7 @@ setup and requirements.
         }
       },
       "consumer2": {
-        "topics": [
-          "topic2"
-        ],
+        "topics": ["topic2"],
         "pollTimeoutSec": 10,
         "props": {
           "key.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
@@ -168,17 +163,17 @@ section are optional.
 - **colors**: Defines color codes for different types of messages using ANSI escape codes. These
   codes are used to control the formatting, color, and other output options on text terminals.
 
-    - **Error Messages**: `\u001B[0;31m` - Sets the text color to red.
-    - **Result Messages**: `\u001B[0;34m` - Sets the text color to blue.
-    - **Prompt Messages**: `\u001B[0;32m` - Sets the text color to green.
+  - **Error Messages**: `\u001B[0;31m` - Sets the text color to red.
+  - **Result Messages**: `\u001B[0;34m` - Sets the text color to blue.
+  - **Prompt Messages**: `\u001B[0;32m` - Sets the text color to green.
 
   These codes are prefixed with `\u001B` (which represents the escape character) followed by `[`,
   and then the color code (e.g., `0;31m` for red). Here’s a breakdown of the codes:
 
-    - `0` indicates the default text style.
-    - `31` sets the text color to red.
-    - `34` sets the text color to blue.
-    - `32` sets the text color to green.
+  - `0` indicates the default text style.
+  - `31` sets the text color to red.
+  - `34` sets the text color to blue.
+  - `32` sets the text color to green.
 
 ### `kafka` Section
 
@@ -191,10 +186,10 @@ configurations).
 
 The common Kafka properties specified under `props` will be added to all the consumers and
 producers, providing a convenient way to avoid repeating the same properties multiple times in the
-configuration file. For example, you always have to specify the servers.
-You may need some additional general properties for secure communication and authentication between Kafka clients,
-brokers, and the schema registry.
-Find an example in this [configuration file](kafka-cli-template/conf1.json)
+configuration file. For example, you always have to specify the servers. You may need some
+additional general properties for secure communication and authentication between Kafka clients,
+brokers, and the schema registry. Find an example in this [configuration
+file](kafka-cli-template/conf1.json)
 
 #### Consumers
 
@@ -214,8 +209,8 @@ Configuration for Kafka consumers.
 
 Configuration for Kafka producers.
 
-- `props`: Properties specific to each producer, such as serializers, acknowledgments, timeouts,
-  and linger settings. When using Avro to serialize data, you must use the serializers from
+- `props`: Properties specific to each producer, such as serializers, acknowledgments, timeouts, and
+  linger settings. When using Avro to serialize data, you must use the serializers from
   [avro-spec](https://github.com/imrafaelmerino/avro-spec), as shown in `producer1`:
   ```json
   "key.serializer": "jsonvalues.spec.serializers.confluent.ConfluentSerializer",
@@ -255,122 +250,122 @@ otherwise you'll get an error.
 
 - **producer-list** (alias: pls)
 
-    - Usage: `producer-list`
-    - Description: Lists all Kafka producers along with their statuses (up or down).
-    - Output: The list of producers with their names and statuses.
+  - Usage: `producer-list`
+  - Description: Lists all Kafka producers along with their statuses (up or down).
+  - Output: The list of producers with their names and statuses.
 
 - **producer-start** (alias: ps)
-    - Usage: `producer-start [producer-name]`
-    - Description: Starts a Kafka producer using the provided configuration.
-    - Parameters:
-        - `producer-name` (optional): The name of the producer to start. If not provided, the user will
-          be prompted to select from a list of available
+  - Usage: `producer-start [producer-name]`
+  - Description: Starts a Kafka producer using the provided configuration.
+  - Parameters:
+    - `producer-name` (optional): The name of the producer to start. If not provided, the user will
+      be prompted to select from a list of available
 
 producers.
 
 - Output:
 
-    - Success: "Producer `<producer-name>` started!"
-    - Failure: Appropriate error message if the configuration is not found or if the producer is
-      already started.
+  - Success: "Producer `<producer-name>` started!"
+  - Failure: Appropriate error message if the configuration is not found or if the producer is
+    already started.
 
 - **producer-stop** (alias: pst)
 
-    - Usage: `producer-stop [producer-name]`
-    - Description: Stops a running Kafka producer.
-    - Parameters:
-        - `producer-name` (optional): The name of the producer to stop. If not provided, the user will
-          be prompted to select from a list of available producers.
-    - Output:
-        - Success: "Producer `<producer-name>` closed!"
-        - Failure: Appropriate error message if the producer is not found or is already closed.
+  - Usage: `producer-stop [producer-name]`
+  - Description: Stops a running Kafka producer.
+  - Parameters:
+    - `producer-name` (optional): The name of the producer to stop. If not provided, the user will
+      be prompted to select from a list of available producers.
+  - Output:
+    - Success: "Producer `<producer-name>` closed!"
+    - Failure: Appropriate error message if the producer is not found or is already closed.
 
 - **producer-publish** (alias: pb)
 
-    - Usage: `producer-publish [channel-name]`
-    - Description: Sends a generated key-value pair or value to a specified Kafka topic using the
-      appropriate Kafka producer.
-    - Parameters:
-        - `channel-name` (optional): The name of the channel to publish to. If not provided, the user
-          will be prompted to select from a list of available channels with an `up` status.
-    - Output:
-        - Success: A message indicating that the record was successfully sent, along with the offset and
-          partition details.
-        - Failure: Appropriate error message if the producer is not started or if the channel name is
-          invalid.
+  - Usage: `producer-publish [channel-name]`
+  - Description: Sends a generated key-value pair or value to a specified Kafka topic using the
+    appropriate Kafka producer.
+  - Parameters:
+    - `channel-name` (optional): The name of the channel to publish to. If not provided, the user
+      will be prompted to select from a list of available channels with an `up` status.
+  - Output:
+    - Success: A message indicating that the record was successfully sent, along with the offset and
+      partition details.
+    - Failure: Appropriate error message if the producer is not started or if the channel name is
+      invalid.
 
 - **producer-publish-file** (alias: pbf)
-    - Usage: `producer-publish-file {channel} {file_path}`
-    - Description: Publishes records from a file to the specified Kafka channel. This command allows
-      you to generate custom data (not generated by the CLI) and specify the format of the file.
-    - Parameters:
-        - `channel`: The name of the Kafka channel to publish to.
-        - `file_path`: The absolute path of the file containing records to publish.
-    - File Format:
-        - Each record should be separated by a new line.
-        - Each record consists of one or more lines, starting with either "headers:", "key:", or
-          "value:".
-        - Headers and key are optional.
-        - Headers must be a JSON object.
-    - Example:
-      ```plaintext
-      headers: {"header1": "value1", "header2": "value2"}
-      key: {"_id": "key1"}
-      value: {"a": 1, "b": "text", "c": "more text"}
-      ```
-    - Output:
-        - Success: Messages indicating that the records were successfully sent, along with the offset
-          and partition details.
-        - Failure: Appropriate error message if the producer is not started or if the channel name is
-          invalid.
+  - Usage: `producer-publish-file {channel} {file_path}`
+  - Description: Publishes records from a file to the specified Kafka channel. This command allows
+    you to generate custom data (not generated by the CLI) and specify the format of the file.
+  - Parameters:
+    - `channel`: The name of the Kafka channel to publish to.
+    - `file_path`: The absolute path of the file containing records to publish.
+  - File Format:
+    - Each record should be separated by a new line.
+    - Each record consists of one or more lines, starting with either "headers:", "key:", or
+      "value:".
+    - Headers and key are optional.
+    - Headers must be a JSON object.
+  - Example:
+    ```plaintext
+    headers: {"header1": "value1", "header2": "value2"}
+    key: {"_id": "key1"}
+    value: {"a": 1, "b": "text", "c": "more text"}
+    ```
+  - Output:
+    - Success: Messages indicating that the records were successfully sent, along with the offset
+      and partition details.
+    - Failure: Appropriate error message if the producer is not started or if the channel name is
+      invalid.
 
 ### Consumer Commands
 
 - **consumer-list** (alias: cls)
 
-    - Usage: `consumer-list`
-    - Description: Lists all Kafka consumers along with their statuses (up or down).
-    - Output: The list of consumers with their names and statuses.
+  - Usage: `consumer-list`
+  - Description: Lists all Kafka consumers along with their statuses (up or down).
+  - Output: The list of consumers with their names and statuses.
 
 - **consumer-start** (alias: cs)
 
-    - Usage: `consumer-start [consumer-name] [-verbose]`
-    - Description: Starts a Kafka consumer using the provided configuration.
-    - Parameters:
-        - `consumer-name` (optional): The name of the consumer to start. If not provided, the user will
-          be prompted to select from a list of available consumers.
-        - `-verbose` (optional): If provided, the consumer will output a verbose log of the received
-          messages.
-    - Output:
-        - Success: "Consumer `<consumer-name>` started!"
-        - Failure: Appropriate error message if the configuration is not found or if the consumer is
-          already started.
+  - Usage: `consumer-start [consumer-name] [-verbose]`
+  - Description: Starts a Kafka consumer using the provided configuration.
+  - Parameters:
+    - `consumer-name` (optional): The name of the consumer to start. If not provided, the user will
+      be prompted to select from a list of available consumers.
+    - `-verbose` (optional): If provided, the consumer will output a verbose log of the received
+      messages.
+  - Output:
+    - Success: "Consumer `<consumer-name>` started!"
+    - Failure: Appropriate error message if the configuration is not found or if the consumer is
+      already started.
 
 - **consumer-stop** (alias: cst)
 
-    - Usage: `consumer-stop [consumer-name]`
-    - Description: Stops a running Kafka consumer.
-    - Parameters:
-        - `consumer-name` (optional): The name of the consumer to stop. If not provided, the user will
-          be prompted to select from a list of available consumers.
-    - Output:
-        - Success: "Consumer `<consumer-name>` closed!"
-        - Failure: Appropriate error message if the consumer is not found or is already closed.
+  - Usage: `consumer-stop [consumer-name]`
+  - Description: Stops a running Kafka consumer.
+  - Parameters:
+    - `consumer-name` (optional): The name of the consumer to stop. If not provided, the user will
+      be prompted to select from a list of available consumers.
+  - Output:
+    - Success: "Consumer `<consumer-name>` closed!"
+    - Failure: Appropriate error message if the consumer is not found or is already closed.
 
 - **consumer-commit**
-    - Usage: `consumer-commit [consumer-name]`
-    - Description: Sends an asynchronous commit request to the specified consumer.
-    - Parameters:
-        - `consumer-name`: The name of the consumer to commit.
-    - Output:
-        - Success: "Commit request sent to consumer `<consumer-name>`!"
+  - Usage: `consumer-commit [consumer-name]`
+  - Description: Sends an asynchronous commit request to the specified consumer.
+  - Parameters:
+    - `consumer-name`: The name of the consumer to commit.
+  - Output:
+    - Success: "Commit request sent to consumer `<consumer-name>`!"
 
 ### Channel Commands
 
 - **channel-list** (alias: chls)
-    - Usage: `channel-list`
-    - Description: Prints out the list of channels defined in the configuration file.
-    - Output: The list of channels with their names, associated producers, statuses, and topics.
+  - Usage: `channel-list`
+  - Description: Prints out the list of channels defined in the configuration file.
+  - Output: The list of channels with their names, associated producers, statuses, and topics.
 
 ## Examples of Commands and Outputs
 
@@ -378,40 +373,40 @@ producers.
 Welcome to kafka CLI! Go to https://github.com/imrafaelmerino/kafka-cli for further info
 ~ list
 
-base64-decode             
-base64-encode             
+base64-decode
+base64-encode
 channel-list              (chls)
-clear                     
-consumer-commit           
+clear
+consumer-commit
 consumer-list             (cls)
 consumer-start            (cs)
 consumer-stop             (cst)
-echo                      
-exit                      
-file-dump                 
-file-read                 
-gen topic1KeyGen                
-gen topic1ValueGen               
-gen topic2ValueGen              
-gen topic3ValueGen              
-help                      
-history                   
-json-get                  
-json-pairs                
-json-pretty               
-last                      
-list                      
-print-conf                
+echo
+exit
+file-dump
+file-read
+gen topic1KeyGen
+gen topic1ValueGen
+gen topic2ValueGen
+gen topic3ValueGen
+help
+history
+json-get
+json-pairs
+json-pretty
+last
+list
+print-conf
 producer-list             (pls)
 producer-publish          (pb)
 producer-publish-file     (pbf)
 producer-start            (ps)
 producer-stop             (pst)
-script                    
-url-encode                
-var-clear                 
-var-get                   
-var-set                   
+script
+url-encode
+var-clear
+var-get
+var-set
 
 ~ ps
 
@@ -435,17 +430,17 @@ Producer `producer2` started!
 
 ~ channel-list
 
-Name                 Producer             Status               Topic               
+Name                 Producer             Status               Topic
 --------------------------------------------------------------------------------
-1                    producer1            up                   topic1              
-2                    producer2            up                   topic2              
+1                    producer1            up                   topic1
+2                    producer2            up                   topic2
 
 ~ pb
 
-Name                 Producer             Status               Topic               
+Name                 Producer             Status               Topic
 --------------------------------------------------------------------------------
-1                    producer1            up                   topic1              
-2                    producer2            up                   topic2              
+1                    producer1            up                   topic1
+2                    producer2            up                   topic2
 
 Type the channel name (choose one of the above with an `up` Status):
 ~ 2
@@ -511,9 +506,9 @@ Publish response received:
 
 ~ consumer-list
 
-Name                 Status     Topics                                            
-consumer2            down       topic3                                            
-consumer1            up         topic1,topic2     
+Name                 Status     Topics
+consumer2            down       topic3
+consumer1            up         topic1,topic2
 
 ~ consumer-start
 
@@ -529,7 +524,7 @@ Do you want a verbose output of the received messages? (yes | no)
 
 Consumer `consumer2` started!
 
-~ 
+~
 Received 5 records from topics `[topic2]` in consumer `consumer2`
 
 Record 1:
@@ -624,11 +619,11 @@ public class MyCLI {
   public static void main(String[] args) {
 
     Map<String, Gen<?>> generators = new HashMap<>();
-    
+
     generators.put("topic1KeyGen",
                    JsObjGen.of("_id",
                                JsStrGen.alphabetic()));
-    
+
     generators.put("topic1ValueGen",
                    JsObjGen.of("a",
                                JsIntGen.arbitrary(0,
@@ -639,7 +634,7 @@ public class MyCLI {
                                JsStrGen.alphabetic()
                               )
                   );
-    
+
     generators.put("topic2ValueGen",
                    JsObjGen.of("id",
                                JsStrGen.alphabetic(),
@@ -647,7 +642,7 @@ public class MyCLI {
                                JsDoubleGen.arbitrary(100.0d,
                                                      1000d)
                               ));
-    
+
     generators.put("topic3ValueGen",
                    StrGen.alphabetic(10,
                                      100));
@@ -660,8 +655,9 @@ public class MyCLI {
 
 ```
 
-As you can see, the generators specified in the configuration file (`topic1KeyGen`, `topic1ValueGen`, 
-`topic2ValueGen` and `topic3ValueGen`) must be created and used to instantiate the `KafkaCLI` object.
+As you can see, the generators specified in the configuration file (`topic1KeyGen`,
+`topic1ValueGen`, `topic2ValueGen` and `topic3ValueGen`) must be created and used to instantiate the
+`KafkaCLI` object.
 
 ### Step 3: Execute the Maven Command
 
@@ -694,16 +690,17 @@ configuration file and the log4j file where the Kafka client dumps its log entri
 </systemProperties>
 ```
 
-This configuration specifies that the CLI will use `conf.json` for its configuration and
-`cli.log` for logging.
+This configuration specifies that the CLI will use `conf.json` for its configuration and `cli.log`
+for logging.
 
 ---
 
 ### Step 4: Set up a Kafka broker and a Schema Registry!
 
-Before publishing or consuming any message, ensure that Kafka is up and running, a topic is created, and
-an Avro schema is associated with the topic's values. To do this, follow the steps below, using the
-provided [`docker-compose.yml`](src/test/resources/docker-compose.yml) file to start the Confluent platform:
+Before publishing or consuming any message, ensure that Kafka is up and running, a topic is created,
+and an Avro schema is associated with the topic's values. To do this, follow the steps below, using
+the provided [`docker-compose.yml`](src/test/resources/docker-compose.yml) file to start the
+Confluent platform:
 
 ```shell
 
@@ -763,13 +760,13 @@ You can verify that everything is working correctly by visiting the Control Cent
 
 ### Step 5: Playing around Kafka-CLI typing some commands!
 
-Let's see the available commands that start with consumer and producer and
-if any alias has been defined in the conf file
+Let's see the available commands that start with consumer and producer and if any alias has been
+defined in the conf file
 
 ```shell
 ~ list consumer
 
-consumer-commit           
+consumer-commit
 consumer-list             (cl)
 consumer-start            (cs)
 consumer-stop             (cst)
@@ -803,11 +800,11 @@ Producer `producer2` started!
 
 ~ pb
 
-Name                 Producer             Status               Topic               
+Name                 Producer             Status               Topic
 --------------------------------------------------------------------------------
-1                    producer1            up                   topic1              
-2                    producer2            up                   topic3              
-3                    producer1            up                   topic2              
+1                    producer1            up                   topic1
+2                    producer2            up                   topic3
+3                    producer1            up                   topic2
 
 Type the channel name (choose one of the above with an `up` Status):
 ~ 1
@@ -858,22 +855,22 @@ Now let's start the consumers!
 ```shell
 ~ cl
 
-Name                 Status     Topics                                            
-consumer2            down       topic3                                            
-consumer1            down       topic1,topic2          
+Name                 Status     Topics
+consumer2            down       topic3
+consumer1            down       topic1,topic2
 
 ~ cs consumer1
 
 Consumer `consumer1` started!
 
-~ 
+~
 Received 2 records from topics `[topic1, topic2]` in consumer `consumer1`
 
 ~ cs consumer2 -verbose
 
 Consumer `consumer2` started!
 
-~ 
+~
 Received 1 records from topics `[topic3]` in consumer `consumer2`
 
 Record 1:
@@ -887,8 +884,6 @@ Record 1:
 bye bye!
 
 ```
-
-
 
 ## <a name="examples"><a/> Useful Examples
 
@@ -922,8 +917,8 @@ To run the script, use the following command in kafka-cli:
 ~ script ${DIR_PATH}/my_publisher.jio
 ```
 
-This will execute all the commands in `my_publisher.jio` sequentially, automating the process and saving
-you time.
+This will execute all the commands in `my_publisher.jio` sequentially, automating the process and
+saving you time.
 
 ---
 
