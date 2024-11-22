@@ -1,6 +1,9 @@
 <p align="center">
-  <img src="./kafka_cli.png" alt="Logo" width="300" height="300" />
+  <img src="./logo.png" alt="Logo" width="300" height="300" />
 </p>
+
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/kafka-cli/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/kafka-cli/1.0.0/jar)
+
 
 - [Introduction](#intro)
 - [Configuration File](#conf)
