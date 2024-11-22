@@ -7,14 +7,21 @@ record KafkaResponse(long timestamp,
                      int partition) {
 
 
-    String getResponseReceivedMessage(String topic) {
-        return STR."""
-        Publish response received:
-          Topic: \{topic}
-          Offset: \{offset}
-          Partition: \{partition}
-          Timestamp: \{Instant.ofEpochMilli(timestamp)}""";
-    }
+  String getResponseReceivedMessage(String topic) {
+    return String.format(
+        """
+            Publish response received:
+              Topic: %s
+              Offset: %d
+              Partition: %d
+              Timestamp: %s""",
+        topic,
+        offset,
+        partition,
+        Instant.ofEpochMilli(timestamp)
+                        );
+
+  }
 
 
 }

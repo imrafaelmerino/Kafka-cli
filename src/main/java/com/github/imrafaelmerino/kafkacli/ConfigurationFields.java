@@ -17,13 +17,6 @@ final class ConfigurationFields {
     public static final String CHANNELS = "channels";
     public static final String TOPICS = "topics";
     public static final String TOPIC = "topic";
-    public static final String KSQL = "ksql";
-    public static final String KSQL_PROPS = "props";
-    public static final String KSQL_HOST = "host";
-    public static final String KSQL_PORT = "port";
-    public static final String KSQL_QUERIES = "queries";
-    public static final String KSQL_PUSH_QUERIES = "push";
-    public static final String KSQL_PULL_QUERIES = "pull";
     private ConfigurationFields() {
     }
 

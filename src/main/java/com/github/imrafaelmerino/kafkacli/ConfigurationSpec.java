@@ -1,13 +1,10 @@
 package com.github.imrafaelmerino.kafkacli;
 
-
 import jsonvalues.JsNull;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpec;
 import jsonvalues.spec.JsSpecs;
 
-import java.util.Locale;
-import java.util.function.Predicate;
 
 import static com.github.imrafaelmerino.kafkacli.ConfigurationFields.*;
 
@@ -57,7 +54,7 @@ final class ConfigurationSpec {
                                   VALUE_SCHEMA,
                                   KEY_GEN,
                                   VALUE_GEN);
-    private static final Predicate<String> CONTAIN_EMIT_CHANGES = query -> query.toLowerCase(Locale.ENGLISH).contains("emit changes");
+
     static final JsObjSpec global =
             JsObjSpec.of(KAFKA,
                          JsObjSpec.of(COMMON_PROPS,
@@ -67,14 +64,7 @@ final class ConfigurationSpec {
                                       CONSUMERS,
                                       JsSpecs.mapOfSpec(consumerSpec),
                                       CHANNELS,
-                                      JsSpecs.mapOfSpec(channelSpec),
-                                      KSQL,
-                                      JsObjSpec.of(KSQL_PROPS, JsObjSpec.of(KSQL_HOST, JsSpecs.str(),
-                                                                            KSQL_PORT, JsSpecs.integer()
-                                                                           ).lenient(),
-                                                   KSQL_QUERIES, JsObjSpec.of(KSQL_PUSH_QUERIES, JsSpecs.mapOfSpec(JsSpecs.str(CONTAIN_EMIT_CHANGES)),
-                                                                              KSQL_PULL_QUERIES, JsSpecs.mapOfSpec(JsSpecs.str(CONTAIN_EMIT_CHANGES.negate())))
-                                                  )
+                                      JsSpecs.mapOfSpec(channelSpec)
                                      ).withAllOptKeys()
                         ).lenient();
     private ConfigurationSpec() {

@@ -86,8 +86,6 @@ public class KafkaCLI {
     private Console createConsole(JsObj conf) {
         validate(conf);
 
-        KsqlDbClient ksqlDbClient = new KsqlDbClient(conf.getObj(JsPath.fromKey(KAFKA).key(KSQL).key(KSQL_PROPS)));
-
         List<Command> myCommands = new ArrayList<>();
 
         KafkaProducers producers = new KafkaProducers();
@@ -109,7 +107,6 @@ public class KafkaCLI {
         myCommands.add(new ConsumerListCommand(consumers));
         myCommands.add(new ProducerListCommand(producers));
         myCommands.add(new ChannelListCommand(producers));
-        myCommands.add(new PullQueryStartCommand(ksqlDbClient));
 
         for (var genName : generators.keySet()) {
             myCommands.add(new GenerateCommand(genName,

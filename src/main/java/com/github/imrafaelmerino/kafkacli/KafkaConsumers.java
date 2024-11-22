@@ -77,6 +77,7 @@ class KafkaConsumers implements
             }
 
             ConsolePrinter.printlnResult(all.toString());
+            ConsolePrinter.printPrompt("~ ");
 
         }
 
@@ -132,7 +133,7 @@ class KafkaConsumers implements
 
     void commitAsync(String consumerName) {
         this.consumers.get(consumerName)
-                      .commitAsync((_, exception) -> {
+                      .commitAsync((v, exception) -> {
                           if (exception == null) {
                               ConsolePrinter.printlnResult("Commit request from consumer `%s` completed".formatted(consumerName));
                           } else {

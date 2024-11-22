@@ -46,7 +46,7 @@ class ProducerListCommand extends Command {
     public Function<String[], IO<String>> apply(final JsObj conf,
                                                 final State state
                                                ) {
-        return _ -> IO.lazy(() -> {
+        return v ->  IO.lazy(() -> {
             Set<String> result = ConfigurationQueries.getProducers(conf);
             return result.stream()
                          .map(producer -> String.format("%-20s %s",

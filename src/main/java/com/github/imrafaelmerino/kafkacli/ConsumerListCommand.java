@@ -23,10 +23,9 @@ class ConsumerListCommand extends Command {
 
             Example:
             $ consumer-list
-            Name                 Status
-            consumer1            up
-            consumer2            down
-            consumer3            up
+            Name                 Status     Topics
+            consumer1            up         topic2
+            consumer2            down       topic1,transactions
 
             Note:
             Ensure that the consumer configurations are correctly set in the configuration file to accurately reflect their statuses.
@@ -46,18 +45,22 @@ class ConsumerListCommand extends Command {
     public Function<String[], IO<String>> apply(final JsObj conf,
                                                 final State state
                                                ) {
-        return _ -> IO.lazy(() -> {
+        return v -> IO.lazy(() -> {
             Set<String> result = ConfigurationQueries.getConsumers(conf);
-            return result.stream()
-                         .map(consumer -> String.format("%-20s %s",
-                                                        consumer,
-                                                        kafkaConsumers.apply(consumer) != null ? "up" : "down")
-                             )
-                         .collect(Collectors.joining("\n",
-                                                     String.format("%-20s %s",
-                                                                   "Name",
-                                                                   "Status\n"),
-                                                     ""));
+          return result.stream()
+                       .map(consumer -> {
+                         var topics = ConfigurationQueries.getConsumerTopics(conf, consumer);
+                         return new Object[]{
+                             consumer,
+                             kafkaConsumers.apply(consumer) != null ? "up" : "down",
+                             String.join(",", topics)
+                         };
+                       })
+                       .map(row -> String.format("%-20s %-10s %-50s", row[0], row[1], row[2]))
+                       .collect(Collectors.joining("\n",
+                                                   String.format("%-20s %-10s %-50s\n", "Name", "Status", "Topics"),
+                                                   ""));
+
         });
     }
 

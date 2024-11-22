@@ -185,7 +185,7 @@ class PublishFileCommand extends Command {
                                       final ProducerRecord<Object, Object> record
                                      ) {
         return IO.lazy(() -> ConsolePrinter.printlnResult(Fun.getMessageSent(record)))
-                 .then(_ ->
+                 .then(v -> 
                                IO.effect(() -> producer.send(record
                                                             )
                                         )

@@ -65,7 +65,7 @@ setup and requirements.
       "channel-list": "chls"
     },
     "welcome_message": "Welcome to kafka CLI! Go to https://github.com/imrafaelmerino/kafka-cli for further info",
-    "session_file_dir": "/Users/rmerino/Projects/kafka-cli/",
+    "session_file_dir": "PROJECT_HOME/logs",
     "colors": {
       "error": "\u001B[0;31m",
       "result": "\u001B[0;34m",
@@ -387,9 +387,10 @@ echo
 exit                      
 file-dump                 
 file-read                 
-gen keyGen                
-gen textGen               
-gen valueGen              
+gen topic1KeyGen                
+gen topic1ValueGen               
+gen topic2ValueGen              
+gen topic3ValueGen              
 help                      
 history                   
 json-get                  
@@ -505,6 +506,12 @@ Publish response received:
   Partition: 0
   Timestamp: 2024-05-23T20:47:53.110Z
 
+~ consumer-list
+
+Name                 Status     Topics                                            
+consumer2            down       topic3                                            
+consumer1            up         topic1,topic2     
+
 ~ consumer-start
 
 consumer2
@@ -598,40 +605,70 @@ Below is an example of what this class might look like:
 package com.example.cli;
 
 import com.github.imrafaelmerino.kafkacli.KafkaCLI;
-import fun.gen.*;
-import jsonvalues.*;
-
-import java.util.*;
+import fun.gen.Gen;
+import fun.gen.StrGen;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+import jsonvalues.JsObj;
+import jsonvalues.gen.JsDoubleGen;
+import jsonvalues.gen.JsIntGen;
+import jsonvalues.gen.JsObjGen;
+import jsonvalues.gen.JsStrGen;
 
 public class MyCLI {
-    public static void main(String[] args) {
-        Map<String, Gen<?>> generators = new HashMap<>();
-        generators.put("keyGen",
-                       JsObjGen.of("_id",
-                                   JsStrGen.alphabetic()));
-        generators.put("valueGen",
-                       JsObjGen.of("a",
-                                   JsIntGen.arbitrary(0, 1000),
-                                   "b",
-                                   JsStrGen.alphabetic(),
-                                   "c",
-                                   JsStrGen.alphabetic()));
-        generators.put("textGen",
-                       StrGen.alphabetic(10, 100));
 
-        new KafkaCLI(generators).start(args);
-    }
+  public static void main(String[] args) {
+
+    Map<String, Gen<?>> generators = new HashMap<>();
+    
+    generators.put("topic1KeyGen",
+                   JsObjGen.of("_id",
+                               JsStrGen.alphabetic()));
+    
+    generators.put("topic1ValueGen",
+                   JsObjGen.of("a",
+                               JsIntGen.arbitrary(0,
+                                                  1000),
+                               "b",
+                               JsStrGen.alphabetic(),
+                               "c",
+                               JsStrGen.alphabetic()
+                              )
+                  );
+    
+    generators.put("topic2ValueGen",
+                   JsObjGen.of("id",
+                               JsStrGen.alphabetic(),
+                               "amount",
+                               JsDoubleGen.arbitrary(100.0d,
+                                                     1000d)
+                              ));
+    
+    generators.put("topic3ValueGen",
+                   StrGen.alphabetic(10,
+                                     100));
+
+    new KafkaCLI(generators).start(args);
+
+
+  }
 }
+
 ```
 
-As you can see, the generators specified in the configuration file (`keyGen`, `valueGen`, and
-`textGen`) must be created and used to instantiate the `KafkaCLI` object.
+As you can see, the generators specified in the configuration file (`topic1KeyGen`, `topic1ValueGen`, 
+`topic2ValueGen` and `topic3ValueGen`) must be created and used to instantiate the `KafkaCLI` object.
 
 ### Step 3: Execute the Maven Command
 
 To start the CLI, execute the following Maven command:
 
 ```sh
+sdk install java 21-open
+
+sdk use java 21-open
+
 mvn exec:java
 ```
 
@@ -647,17 +684,208 @@ configuration file and the log4j file where the Kafka client dumps its log entri
 </arguments>
 
 <systemProperties>
-<systemProperty>
-    <key>log4jFilePath</key>
-    <value>${project.basedir}/.kafka.log</value>
-</systemProperty>
+    <systemProperty>
+        <key>log4jFilePath</key>
+        <value>${project.basedir}/logs/cli.log</value>
+    </systemProperty>
 </systemProperties>
 ```
 
 This configuration specifies that the CLI will use `conf.json` for its configuration and
-`.kafka.log` for logging.
+`cli.log` for logging.
 
 ---
+
+### Step 4: Set up a Kafka broker and a Schema Registry!
+
+Before publishing or consuming any message, ensure that Kafka is up and running, a topic is created, and
+an Avro schema is associated with the topic's values. To do this, follow the steps below, using the
+provided [`docker-compose.yml`](src/test/resources/docker-compose.yml) file to start the Confluent platform:
+
+```shell
+
+cd kafka-cli-template
+
+docker-compose up
+
+SCHEMA_REGISTRY_HOST="localhost"
+SCHEMA_REGISTRY_PORT="8081"
+REST_PROXY_PORT="8082"
+REST_PROXY_HOST="localhost"
+TOPIC_TX_NAME="topic2"
+TOPIC1_NAME="topic1"
+TOPIC2_NAME="topic2"
+TOPIC3_NAME="topic3"
+
+CLUSTER_ID=$(curl -s -X GET -H "Accept: application/json" "http://${REST_PROXY_HOST}:${REST_PROXY_PORT}/v3/clusters" | jq -r '.data[0].cluster_id')
+
+echo $CLUSTER_ID
+
+# Define topic names
+TOPICS=("${TOPIC1_NAME}" "${TOPIC2_NAME}" "${TOPIC3_NAME}")
+
+# Loop through the topics and create each one
+for TOPIC_NAME in "${TOPICS[@]}"; do
+  curl -X POST \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    --data '{
+      "topic_name": "'"${TOPIC_NAME}"'",
+      "partitions_count": 1,
+      "replication_factor": 1
+    }' \
+    "http://${REST_PROXY_HOST}:${REST_PROXY_PORT}/v3/clusters/${CLUSTER_ID}/topics"
+done
+
+curl -X POST \
+-H "Content-Type: application/vnd.schemaregistry.v1+json" \
+--data @payloads/payment-schema.json \
+"http://${SCHEMA_REGISTRY_HOST}:${SCHEMA_REGISTRY_PORT}/subjects/${TOPIC2_NAME}-value/versions"
+
+curl -X POST \
+-H "Content-Type: application/vnd.schemaregistry.v1+json" \
+--data @payloads/record-schema.json \
+"http://${SCHEMA_REGISTRY_HOST}:${SCHEMA_REGISTRY_PORT}/subjects/${TOPIC1_NAME}-value/versions"
+
+curl -X POST \
+-H "Content-Type: application/vnd.schemaregistry.v1+json" \
+--data @payloads/key-schema.json \
+"http://${SCHEMA_REGISTRY_HOST}:${SCHEMA_REGISTRY_PORT}/subjects/${TOPIC1_NAME}-key/versions"
+
+
+```
+
+You can verify that everything is working correctly by visiting the Control Center at
+[http://localhost:9021/clusters](http://localhost:9021/clusters).
+
+### Step 5: Playing around Kafka-CLI typing some commands!
+
+Let's see the available commands that start with consumer and producer and
+if any alias has been defined in the conf file
+
+```shell
+~ list consumer
+
+consumer-commit           
+consumer-list             (cl)
+consumer-start            (cs)
+consumer-stop             (cst)
+
+~ list producer
+
+producer-list             (pl)
+producer-publish          (pb)
+producer-publish-file     (pbf)
+producer-start            (ps)
+producer-stop             (pst)
+
+```
+
+Let's start all the producers and publish some messages:
+
+```shell
+~ pl
+
+Name                 Status
+producer1            down
+producer2            down
+
+~ ps producer1
+
+Producer `producer1` started!
+
+~ ps producer2
+
+Producer `producer2` started!
+
+~ pb
+
+Name                 Producer             Status               Topic               
+--------------------------------------------------------------------------------
+1                    producer1            up                   topic1              
+2                    producer2            up                   topic3              
+3                    producer1            up                   topic2              
+
+Type the channel name (choose one of the above with an `up` Status):
+~ 1
+
+Publish request sent:
+  Topic: topic1
+  Key: {"_id": "u"}
+  Value: {"c": "u", "b": "y", "a": 884}
+
+
+Publish response received:
+  Topic: topic1
+  Offset: 2
+  Partition: 0
+  Timestamp: 2024-11-22T08:21:20.163Z
+
+~  pb 2
+
+Publish request sent:
+  Topic: topic3
+  Value: QXaUypUtwvBI
+
+
+Publish response received:
+  Topic: topic3
+  Offset: 1
+  Partition: 0
+  Timestamp: 2024-11-22T08:22:07.161Z
+
+~  pb 3
+
+Publish request sent:
+  Topic: topic2
+  Value: {"id": "m", "amount": 585.6324318812799}
+
+
+Publish response received:
+  Topic: topic2
+  Offset: 1
+  Partition: 0
+  Timestamp: 2024-11-22T08:22:22.994Z
+
+
+```
+
+Now let's start the consumers!
+
+```shell
+~ cl
+
+Name                 Status     Topics                                            
+consumer2            down       topic3                                            
+consumer1            down       topic1,topic2          
+
+~ cs consumer1
+
+Consumer `consumer1` started!
+
+~ 
+Received 2 records from topics `[topic1, topic2]` in consumer `consumer1`
+
+~ cs consumer2 -verbose
+
+Consumer `consumer2` started!
+
+~ 
+Received 1 records from topics `[topic3]` in consumer `consumer2`
+
+Record 1:
+  Offset: 1
+  Key: null
+  Value: QXaUypUtwvBI
+  Partition: 0
+  Timestamp: 1732263727161
+
+~ exit
+bye bye!
+
+```
+
+
 
 ## <a name="examples"><a/> Useful Examples
 

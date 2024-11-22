@@ -2,18 +2,18 @@
   "conf": {
     "aliases": {
       "producer-start": "ps",
-      "producer-list": "pls",
+      "producer-list": "pl",
       "producer-stop": "pst",
       "producer-publish": "pb",
       "producer-publish-file": "pbf",
       "consumer-start": "cs",
-      "consumer-list": "cls",
+      "consumer-list": "cl",
       "consumer-stop": "cst",
-      "channel-list": "chls",
+      "channel-list": "chl",
       "ksql-pull-query": "pq"
     },
     "welcome_message": "Welcome to kafka CLI! Go to https://github.com/imrafaelmerino/kafka-cli for further info",
-    "session_file_dir": "/Users/rmerino/Projects/kafka-cli/",
+    "session_file_dir": "/Users/rmerino/Projects/kafka-cli/kafka-cli-template/logs",
     "colors": {
       "error": "\u001B[0;31m",
       "result": "\u001B[0;34m",
@@ -27,7 +27,7 @@
     "consumers": {
       "consumer1": {
         "topics": [
-          "topic1"
+          "topic1","topic2"
         ],
         "pollTimeoutSec": 10,
         "props": {
@@ -41,7 +41,7 @@
       },
       "consumer2": {
         "topics": [
-          "topic2"
+          "topic3"
         ],
         "pollTimeoutSec": 10,
         "props": {
@@ -82,35 +82,21 @@
       "1": {
         "producer": "producer1",
         "topic": "topic1",
-        "key-generator": "keyGen",
-        "value-generator": "valueGen",
+        "key-generator": "topic1KeyGen",
+        "value-generator": "topic1ValueGen",
         "key-schema": "{\"type\":\"record\",\"name\":\"key\",\"namespace\":\"com.example.key\",\"fields\":[{\"name\":\"_id\",\"type\":\"string\"}]}",
         "value-schema": "{\"type\":\"record\",\"name\":\"record\",\"namespace\":\"com.example.record\",\"fields\":[{\"name\":\"c\",\"type\":\"string\"},{\"name\":\"b\",\"type\":\"string\"},{\"name\":\"a\",\"type\":\"int\"}]}"
       },
       "2": {
         "producer": "producer2",
-        "value-generator": "textGen",
-        "topic": "topic2"
-      }
-    },
-    "ksql": {
-      "props": {
-        "server": "http:localhost:8088",
-        "basic_auth": ""
+        "value-generator": "topic3ValueGen",
+        "topic": "topic3"
       },
-      "queries": {
-        "pull": {
-          "1": {
-            "stm": "SELECT 'Hello, ' + USERNAME AS GREETING FROM users;",
-            "props": {}
-          }
-        },
-        "push": {
-          "1": {
-            "stm": "SELECT 'Hello, ' + USERNAME AS GREETING FROM users EMIT CHANGES;",
-            "props": {}
-          }
-        }
+      "3": {
+        "producer": "producer1",
+        "value-generator": "topic2ValueGen",
+        "topic": "topic2",
+        "value-schema": "{\"namespace\": \"io.confluent.examples.clients.basicavro\",\"type\": \"record\",\"name\": \"Payment\",\"fields\": [{\"name\": \"id\", \"type\": \"string\"},{\"name\": \"amount\", \"type\": \"double\"}]}"
       }
     }
   }

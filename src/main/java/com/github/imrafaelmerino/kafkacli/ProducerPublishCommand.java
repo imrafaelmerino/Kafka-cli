@@ -190,7 +190,7 @@ class ProducerPublishCommand extends Command {
                                      ) {
         return
                 IO.lazy(() -> ConsolePrinter.printlnResult(Fun.getMessageSent(record)))
-                  .then(_ ->
+                  .then(v -> 
                                 IO.effect(() -> producer.send(record))
                                  .map(it -> new KafkaResponse(it.timestamp(),
                                                                it.offset(),
