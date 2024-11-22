@@ -129,18 +129,24 @@ setup and requirements.
     }
   },
   "channels": {
-    "channel1": {
+    "1": {
       "producer": "producer1",
       "topic": "topic1",
-      "key-generator": "keyGen",
-      "value-generator": "valueGen",
+      "key-generator": "topic1KeyGen",
+      "value-generator": "topic1ValueGen",
       "key-schema": "{\"type\":\"record\",\"name\":\"key\",\"namespace\":\"com.example.key\",\"fields\":[{\"name\":\"_id\",\"type\":\"string\"}]}",
       "value-schema": "{\"type\":\"record\",\"name\":\"record\",\"namespace\":\"com.example.record\",\"fields\":[{\"name\":\"c\",\"type\":\"string\"},{\"name\":\"b\",\"type\":\"string\"},{\"name\":\"a\",\"type\":\"int\"}]}"
     },
-    "channel2": {
+    "2": {
       "producer": "producer2",
-      "value-generator": "textGen",
-      "topic": "topic2"
+      "value-generator": "topic3ValueGen",
+      "topic": "topic3"
+    },
+    "3": {
+      "producer": "producer1",
+      "value-generator": "topic2ValueGen",
+      "topic": "topic2",
+      "value-schema": "{\"namespace\": \"io.confluent.examples.clients.basicavro\",\"type\": \"record\",\"name\": \"Payment\",\"fields\": [{\"name\": \"id\", \"type\": \"string\"},{\"name\": \"amount\", \"type\": \"double\"}]}"
     }
   }
 }
